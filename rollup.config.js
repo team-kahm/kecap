@@ -2,6 +2,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import livereload from 'rollup-plugin-livereload';
 import resolve from 'rollup-plugin-node-resolve';
+import serve from 'rollup-plugin-serve';
 import svelte from 'rollup-plugin-svelte';
 import { terser } from 'rollup-plugin-terser';
 
@@ -33,8 +34,9 @@ export default {
       targets: [{ src: 'public/*', dest: 'dist' }],
     }),
 
-    // Watch the `public` directory and refresh the browser on changes when not in production
-    !production && livereload('public'),
+    // Watch the `dist` directory and refresh the browser on changes when not in production
+    !production && livereload('dist'),
+    !production && serve('dist'),
 
     // If we're building for production (npm run build instead of npm run dev), minify
     production && terser(),
