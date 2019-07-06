@@ -7,13 +7,10 @@
     "svelte",
     "carousel-component"
   ],
-  "dependencies": {
-    "eslint-plugin-html": "^6.0.0",
-    "sirv-cli": "^0.4.4"
-  },
   "devDependencies": {
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-html": "^6.0.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-svelte3": "^2.5.0",
     "rollup": "^1.16.6",
