@@ -1,8 +1,8 @@
 {
-  "name": "listui",
+  "name": "kecap",
   "version": "1.0.0",
-  "description": "Movable List UI",
-  "main": "index.js",
+  "description": "Keyboard-driven Carousel Component Provider",
+  "main": "dist/bundle.js",
   "keywords": [
     "svelte",
     "carousel-component"

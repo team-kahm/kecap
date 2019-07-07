@@ -1,3 +1,3 @@
-# Listui
+# Kecap
 
-> Movable List UI
+> Keyboard-driven Carousel Component Provider
