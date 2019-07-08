@@ -1,8 +1,8 @@
 <script lang="typescript">
-  import Kecap from "./Kecap.svelte";
 </script>
 
 <style>
 </style>
 
-<Kecap />
+<div>
+</div>
