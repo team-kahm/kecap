@@ -1,5 +1,5 @@
 <script lang="typescript">
-  let kecap: String = "Kecap";
+  let kecap: string = "Kecap";
 </script>
 
 <style>

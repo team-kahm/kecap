@@ -35,9 +35,8 @@ export default {
         commonjs(),
         resolve({ browser: true }),
         sucrase({ transforms: ['typescript'] }),
-        copy({
-            targets: [{ src: 'public/*', dest: 'dist' }],
-        }),
+
+        copy({ targets: [{ src: 'public/*', dest: 'dist' }] }),
 
         !production && livereload('dist'),
         !production && serve('dist'),
