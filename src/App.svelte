@@ -1,10 +1,11 @@
-<script>
+<script lang="typescript">
+  let kecap: String = "Kecap";
 </script>
 
 <style>
-	h1 {
-		color: red;
-	}
+  h1 {
+    color: orangered;
+  }
 </style>
 
-<h1>Hello!</h1>
+<h1>Hello {kecap}!</h1>

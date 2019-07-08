@@ -8,6 +8,10 @@
     "carousel-component"
   ],
   "devDependencies": {
+    "@pyoner/svelte-ts-preprocess": "^1.1.0",
+    "@pyoner/svelte-types": "^3.4.4-2",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-html": "^6.0.0",
@@ -19,9 +23,11 @@
     "rollup-plugin-livereload": "^1.0.1",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-sucrase": "^2.1.0",
     "rollup-plugin-svelte": "^5.1.0",
     "rollup-plugin-terser": "^5.1.0",
-    "svelte": "^3.6.4"
+    "svelte": "^3.6.4",
+    "typescript": "^3.5.2"
   },
   "scripts": {
     "build": "rollup -c",
@@ -31,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/project-kahm/listui.git"
+    "url": "git+https://github.com/project-kahm/kecap.git"
   },
   "contributors": [
     "Hmmhmmhm <hmmhmmhm@naver.com>",
@@ -40,7 +46,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/project-kahm/listui/issues"
+    "url": "https://github.com/project-kahm/kecap/issues"
   },
-  "homepage": "https://github.com/project-kahm/listui#readme"
+  "homepage": "https://github.com/project-kahm/kecap#readme"
 }

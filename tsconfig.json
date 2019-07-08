@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "types": [
+      "node",
+      "@pyoner/svelte-types"
+    ],
+    "lib": [
+      "dom"
+    ],
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+}
