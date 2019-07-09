@@ -3,6 +3,8 @@
 </script>
 
 <style>
+
 </style>
 
-<Kecap />
+<h1>Kecap</h1>
+<Kecap itemRow="6" itemCol="7" viewportRow="3" viewportCol="3" />
