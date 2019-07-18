@@ -58,12 +58,23 @@ class ItemManager {
     this.updateItems(items);
   }
 
-  updateItems(items?: Item[], updateIndex: boolean = false) {
+  updateItems(items?: Item[], updateDirection: number = 1, updateIndex: boolean = false) {
     if(!items) {
       items = this.items;
     }
 
+    if(updateDirection > 0) {
+      items = items.reverse();
+    }
 
+    const visibleRange: [number, number] = [
+      ((this.isXDir ? this.x : this.y) - this.option.lazyload) * this.itemSize,
+      ((this.isXDir ? this.x : this.y) + this.option.lazyload) * this.itemSize
+    ];
+
+    items.forEach(item: Item => {
+      item.update(updateDirection, visibleRange);
+    });
 
     if(updateIndex) {
       for(let index in this.items) {
@@ -73,9 +84,9 @@ class ItemManager {
   }
 
   private getIndex(x: number, y: number) : number {
-    if(this.isXDir) return x + this.itemSize * y;
+    if(this.isXDir) return x * this.itemSize + y;
 
-    return y + this.itemSize * x;
+    return y * this.itemSize + x;
   }
 
   private scrollNotIfVisible(dimension: ScrollDimension) {
@@ -114,11 +125,33 @@ class ItemManager {
 
     this.items[this.getIndex(this.x, this.y)].selected = false;
     this.items[index].selected = true;
+
+    const deltaDirection : number = this.isXDir ? x - this.x : y - this.y;
+
     this.x = x;
     this.y = y;
 
     const scrollDimension: ScrollDimension = this.items[index].scrollDimension;
     this.scrollNotIfVisible(scrollDimension);
+
+    if(deltaDirection === 0) return;
+
+    let edgeItems: Item[] = [];
+    const directionValue: number = (this.isXDir ? this.x : this.y);
+
+    const foreValue: number = directionValue - this.option.lazyload;
+    edgeItems = edgeItems.concat(this.items.slice(
+      Math.max(0, foreValue * this.itemSize - this.itemSize),
+      this.itemSize
+    ));
+
+    const backValue: number = directionValue + this.option.lazyload;
+    edgeItems = edgeItems.concat(this.items.slice(
+      Math.min(this.items.length, backValue * this.itemSize),
+      this.itemSize
+    ));
+
+    this.updateItems(edgeItems, deltaDirection);
   }
 
   selectAbove() {

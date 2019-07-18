@@ -25,12 +25,31 @@ class Item {
     this.manager = manager;
   }
 
-  attach() {
+  attach(direction: number) {
+    if(direction > 0) {
+      this.manager.elem.append(this.elem);
+    } else {
+      this.manager.elem.prepend(this.elem);
+    }
 
+    this.attached = true;
   }
 
   detach() {
+    this.manager.elem.removeChild(this.elem);
+    this.attached = false;
+  }
 
+  update(updateDirection: number, visibleRange: [number, number]) {
+    if(visibleRange[0] <= this.index && this.index < visibleRange[1]) {
+      if(!this.attached) {
+        this.attach(updateDirection);
+      }
+    } else {
+      if(this.attached) {
+        this.detach();
+      }
+    }
   }
 
   get scrollDimension() : ScrollDimension {
@@ -42,14 +61,6 @@ class Item {
       top: this.elem.offsetTop,
       bottom: this.elem.offsetTop + height
     };
-  }
-
-  get row() : number {
-
-  }
-
-  get col() : number {
-
   }
 
   get selected() : boolean {
