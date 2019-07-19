@@ -1,21 +1,24 @@
-import ItemManager from "./ItemManager";
+import ItemManager from './ItemManager';
 
-interface ScrollDimension {
-  left: number,
-  right: number,
-  top: number,
-  bottom: number
-};
+export interface ScrollDimension {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
 
-class Item {
-  elem: Element;
-  index: number;
-  attached: boolean;
-  manager: ItemManager;
+export default class Item {
+  public elem: HTMLElement;
+
+  public index: number;
+
+  public attached: boolean;
+
+  public manager: ItemManager;
 
   private _selected: boolean;
 
-  constructor(element: Element, manager: ItemManager, index: number) {
+  public constructor(element: HTMLElement, manager: ItemManager, index: number) {
     this.elem = element;
     this.index = index;
 
@@ -25,8 +28,8 @@ class Item {
     this.manager = manager;
   }
 
-  attach(direction: number) {
-    if(direction > 0) {
+  public attach(direction: number): void {
+    if (direction > 0) {
       this.manager.elem.append(this.elem);
     } else {
       this.manager.elem.prepend(this.elem);
@@ -35,46 +38,44 @@ class Item {
     this.attached = true;
   }
 
-  detach() {
+  public detach(): void {
     this.manager.elem.removeChild(this.elem);
     this.attached = false;
   }
 
-  update(updateDirection: number, visibleRange: [number, number]) {
-    if(visibleRange[0] <= this.index && this.index < visibleRange[1]) {
-      if(!this.attached) {
+  public update(updateDirection: number, visibleRange: [number, number]): void {
+    if (visibleRange[0] <= this.index && this.index < visibleRange[1]) {
+      if (!this.attached) {
         this.attach(updateDirection);
       }
-    } else {
-      if(this.attached) {
-        this.detach();
-      }
+    } else if (this.attached) {
+      this.detach();
     }
   }
 
-  get scrollDimension() : ScrollDimension {
-    const {width: number, height: number} = this.elem.getBoundingClientRect();
+  public get scrollDimension(): ScrollDimension {
+    const { width, height } = this.elem.getBoundingClientRect();
 
     return {
       left: this.elem.offsetLeft,
       right: this.elem.offsetLeft + width,
       top: this.elem.offsetTop,
-      bottom: this.elem.offsetTop + height
+      bottom: this.elem.offsetTop + height,
     };
   }
 
-  get selected() : boolean {
+  public get selected(): boolean {
     return this._selected;
   }
 
-  set selected(selected : boolean) {
+  public set selected(selected: boolean) {
     const original: boolean = this.selected;
 
-    if((original && selected) || (!original && !selected)) {
+    if ((original && selected) || (!original && !selected)) {
       return;
     }
 
-    if(selected) {
+    if (selected) {
       this.elem.classList.add(this.manager.option.selectedClass);
     } else {
       this.elem.classList.remove(this.manager.option.selectedClass);
@@ -83,5 +84,3 @@ class Item {
     this._selected = selected;
   }
 }
-
-export default Item;

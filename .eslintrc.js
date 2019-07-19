@@ -11,7 +11,7 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2019,
     sourceType: 'module',
@@ -20,6 +20,13 @@ module.exports = {
     'html',
     'svelte3',
   ],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    }
+  },
   overrides: [
     {
       files: '*.svelte',
@@ -27,5 +34,7 @@ module.exports = {
     }
   ],
   rules: {
+    indent: 'off',
+    '@typescript-eslint/indent': ['error', 2]
   },
 };

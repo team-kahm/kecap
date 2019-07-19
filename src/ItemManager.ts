@@ -1,31 +1,37 @@
+import Item, { ScrollDimension } from './Item';
+
 enum EnumDirection {
   DIRECTION_X,
   DIRECTION_Y
 }
 
 interface ItemManagerOptions {
-  lazyload?: number,
-  selectedClass?: string,
-  itemRow?: number,
-  itemCol?: number,
-  viewportRow?: number,
-  viewportCol?: number,
-  direction?: EnumDirection
+  lazyload: number;
+  selectedClass: string;
+  itemRow: number;
+  itemCol: number;
+  viewportRow: number;
+  viewportCol: number;
+  direction: EnumDirection;
 }
 
-class ItemManager {
-  elem: Element;
-  items: Item[];
-  option: ItemManagerOptions;
-  x: number;
-  y: number;
+export default class ItemManager {
+  public elem: HTMLElement;
+
+  public items: Item[];
+
+  public option: ItemManagerOptions;
+
+  public x: number;
+
+  public y: number;
 
   private isXDir: boolean;
 
-  constructor(element: Element, option?: ItemManagerOptions) {
+  public constructor(element: HTMLElement, option?: ItemManagerOptions) {
     this.items = [];
     this.elem = element;
-    this.addElements([...this.elem.children]);
+    this.addElements(Array.from(this.elem.children) as HTMLElement[]);
     this.option = {
       lazyload: 20,
       selectedClass: 'selected',
@@ -33,108 +39,104 @@ class ItemManager {
       itemCol: 10,
       viewportRow: 3,
       viewportCol: 3,
-      direction: EnumDirection.DIRECTION_X
+      direction: EnumDirection.DIRECTION_X,
     };
 
     this.x = 0;
     this.y = 0;
 
-    if(option) Object.assign(this.option, option);
+    if (option) Object.assign(this.option, option);
 
     this.isXDir = this.option.direction === EnumDirection.DIRECTION_X;
   }
 
-  addElements(elements: Element[]) {
-    return this.addItems(elements.map((elem: Element, index: number) => {
-      const item: Item = new Item(elem, this, this.items.length + index)
+  public addElements(elements: HTMLElement[]): void {
+    this.addItems(elements.map((elem: HTMLElement, index: number): Item => {
+      const item: Item = new Item(elem, this, this.items.length + index);
       item.attached = true;
 
       return item;
     }));
   }
 
-  addItems(items: Item[]) {
+  public addItems(items: Item[]): void {
     this.items = this.items.concat(items);
     this.updateItems(items);
   }
 
-  updateItems(items?: Item[], updateDirection: number = 1, updateIndex: boolean = false) {
-    if(!items) {
-      items = this.items;
-    }
-
-    if(updateDirection > 0) {
-      items = items.reverse();
-    }
+  public updateItems(items = this.items, updateDirection = 1, updateIndex = false): void {
+    const targets = updateDirection > 0 ? items : items.reverse();
 
     const visibleRange: [number, number] = [
       ((this.isXDir ? this.x : this.y) - this.option.lazyload) * this.itemSize,
-      ((this.isXDir ? this.x : this.y) + this.option.lazyload) * this.itemSize
+      ((this.isXDir ? this.x : this.y) + this.option.lazyload) * this.itemSize,
     ];
 
-    items.forEach(item: Item => {
+    targets.forEach((item): void => {
       item.update(updateDirection, visibleRange);
     });
 
-    if(updateIndex) {
-      for(let index in this.items) {
-        if(items.includes(this.items[index])) this.items[index].index = index;
+    if (updateIndex) {
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (targets.includes(this.items[i])) this.items[i].index = i;
       }
     }
   }
 
-  private getIndex(x: number, y: number) : number {
-    if(this.isXDir) return x * this.itemSize + y;
+  private getIndex(x: number, y: number): number {
+    if (this.isXDir) return x * this.itemSize + y;
 
     return y * this.itemSize + x;
   }
 
-  private scrollNotIfVisible(dimension: ScrollDimension) {
-    const {width: number, height: number} = this.elem.getBoundingClientRect();
-    const scrollTop: number = this.elem.scrollTop;
-    const scrollLeft: number = this.elem.scrollLeft;
+  private scrollNotIfVisible(dimension: ScrollDimension): void {
+    const { width, height } = this.elem.getBoundingClientRect();
+    const { scrollTop } = this.elem;
+    const { scrollLeft } = this.elem;
 
-    let xCoord: number, yCoord: number;
+    let xCoord = 0;
+    let yCoord = 0;
 
-    if(scrollTop < dimension.top) {
+    if (scrollTop < dimension.top) {
       yCoord = dimension.top;
     } else if (scrollTop + height < dimension.bottom) {
       yCoord = dimension.bottom - height;
     }
 
-    if(scrollLeft < dimension.left) {
+    if (scrollLeft < dimension.left) {
       xCoord = dimension.left;
     } else if (scrollLeft + width < dimension.right) {
       xCoord = dimension.right - width;
     }
 
-    if(xCoord !== undefined || yCoord !== undefined)
+    if (xCoord >= 0 || yCoord >= 0) {
       this.elem.scrollTo({
         top: yCoord,
         left: xCoord,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
+    }
   }
 
-  private select(x : number, y : number) {
-    const checkDirection : number = this.isXDir ? y : x;
-    if(checkDirection <= 0 || this.itemSize <= checkDirection) return;
+  private select(x: number, y: number): void {
+    const checkDirection: number = this.isXDir ? y : x;
+    if (checkDirection <= 0 || this.itemSize <= checkDirection) return;
 
-    const index : number = this.getIndex(x, y);
-    if(index <= 0 || this.items.length <= index) return;
+    const index: number = this.getIndex(x, y);
+    if (index <= 0 || this.items.length <= index) return;
 
     this.items[this.getIndex(this.x, this.y)].selected = false;
     this.items[index].selected = true;
 
-    const deltaDirection : number = this.isXDir ? x - this.x : y - this.y;
+    const deltaDirection: number = this.isXDir ? x - this.x : y - this.y;
 
     this.x = x;
     this.y = y;
 
-    const scrollDimension: ScrollDimension = this.items[index].scrollDimension;
+    const { scrollDimension } = this.items[index];
     this.scrollNotIfVisible(scrollDimension);
 
-    if(deltaDirection === 0) return;
+    if (deltaDirection === 0) return;
 
     let edgeItems: Item[] = [];
     const directionValue: number = (this.isXDir ? this.x : this.y);
@@ -142,65 +144,61 @@ class ItemManager {
     const foreValue: number = directionValue - this.option.lazyload;
     edgeItems = edgeItems.concat(this.items.slice(
       Math.max(0, foreValue * this.itemSize - this.itemSize),
-      this.itemSize
+      this.itemSize,
     ));
 
     const backValue: number = directionValue + this.option.lazyload;
     edgeItems = edgeItems.concat(this.items.slice(
       Math.min(this.items.length, backValue * this.itemSize),
-      this.itemSize
+      this.itemSize,
     ));
 
     this.updateItems(edgeItems, deltaDirection);
   }
 
-  selectAbove() {
+  public selectAbove(): void {
     this.select(this.x, this.y - 1);
   }
 
-  selectBelow() {
+  public selectBelow(): void {
     this.select(this.x, this.y - 1);
   }
 
-  selectLeft() {
+  public selectLeft(): void {
     this.select(this.x - 1, this.y);
   }
 
-  selectRight() {
+  public selectRight(): void {
     this.select(this.x + 1, this.y);
   }
 
-  get viewportSize() : number {
-    if(this.isXDir) {
+  public get viewportSize(): number {
+    if (this.isXDir) {
       return this.option.viewportCol;
-    } else {
-      return this.option.viewportRow;
     }
+    return this.option.viewportRow;
   }
 
-  set viewportSize(viewportSize: number) {
-    if(this.isXDir) {
+  public set viewportSize(viewportSize: number) {
+    if (this.isXDir) {
       this.option.viewportCol = viewportSize;
     } else {
       this.option.viewportRow = viewportSize;
     }
   }
 
-  get itemSize() : number {
-    if(this.isXDir) {
+  public get itemSize(): number {
+    if (this.isXDir) {
       return this.option.itemCol;
-    } else {
-      return this.option.itemRow;
     }
+    return this.option.itemRow;
   }
 
-  set itemSize(itemSize: number) {
-    if(this.isXDir) {
+  public set itemSize(itemSize: number) {
+    if (this.isXDir) {
       this.option.itemCol = itemSize;
     } else {
       this.option.itemRow = itemSize;
     }
   }
 }
-
-export default ItemManager;
