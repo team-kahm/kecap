@@ -12,34 +12,34 @@ const production = !process.env.ROLLUP_WATCH;
 const env = createEnv();
 
 export default {
-    input: 'src/main.ts',
-    output: {
-        sourcemap: true,
-        format: 'iife',
-        name: 'app',
-        file: 'dist/bundle.js',
-    },
-    plugins: [
-        svelte({
-            dev: !production,
-            preprocess: preprocess({
-                env,
-                compilerOptions: {
-                    ...readConfigFile(env),
-                    allowNonTsExtensions: true,
-                },
-            }),
-            css: css => css.write('dist/bundle.css'),
-        }),
+  input: 'src/main.ts',
+  output: {
+    sourcemap: true,
+    format: 'iife',
+    name: 'app',
+    file: 'dist/bundle.js',
+  },
+  plugins: [
+    svelte({
+      dev: !production,
+      preprocess: preprocess({
+        env,
+        compilerOptions: {
+          ...readConfigFile(env),
+          allowNonTsExtensions: true,
+        },
+      }),
+      css: css => css.write('dist/bundle.css'),
+    }),
 
-        commonjs(),
-        resolve({ browser: true }),
-        sucrase({ transforms: ['typescript'] }),
+    commonjs(),
+    resolve({ browser: true }),
+    sucrase({ transforms: ['typescript'] }),
 
-        copy({ targets: [{ src: 'public/*', dest: 'dist' }] }),
+    copy({ targets: [{ src: 'public/*', dest: 'dist' }] }),
 
-        !production && livereload('dist'),
-        !production && serve('dist'),
-        production && terser(),
-    ],
+    !production && livereload('dist'),
+    !production && serve('dist'),
+    production && terser(),
+  ],
 };
