@@ -18,12 +18,25 @@ export const Form = (selector: string) => {
 
     // document.querySelector('.grid')
     let gridElement = document.querySelector(selector) as HTMLElement
-    if(!gridElement) return
+    if(!gridElement){
+        console.error('No HTMLElement')
+        return
+    }
 
     // Grid 하위 엘레먼트들을 수집합니다.
-    let grids = gridElement.children
+    let grids: HTMLElement[] = []
 
-    let formComponent = new FormComponent({
+    for(let childrenIndex in gridElement.children){
+        let children = gridElement.children[childrenIndex] as HTMLElement
+        if(children instanceof HTMLElement)
+            grids.push(children.cloneNode(true) as HTMLElement)
+    }
+
+    // 컴포넌트 위치에 모든 DIV 초기화
+    gridElement.innerHTML = ``
+
+    // 컴포넌트 인스턴스
+    return new FormComponent({
 
         // Svelte 컴포넌트가
         // 렌더링 될 엘레먼트를 지정합니다.
