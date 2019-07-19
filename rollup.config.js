@@ -1,5 +1,4 @@
 import commonjs from 'rollup-plugin-commonjs'
-import copy from 'rollup-plugin-copy'
 import livereload from 'rollup-plugin-livereload'
 import resolve from 'rollup-plugin-node-resolve'
 import serve from 'rollup-plugin-serve'
@@ -7,6 +6,8 @@ import sucrase from 'rollup-plugin-sucrase'
 import svelte from 'rollup-plugin-svelte'
 import { terser } from 'rollup-plugin-terser'
 import { preprocess, createEnv, readConfigFile } from '@pyoner/svelte-ts-preprocess'
+import concat from 'concat'
+import fs from 'fs'
 
 const production = !process.env.ROLLUP_WATCH
 const env = createEnv()
@@ -17,7 +18,7 @@ export default {
     sourcemap: false,
     format: 'iife',
     name: 'app',
-    file: 'dist/bundle.js',
+    file: 'dist/kecap.js',
   },
   plugins: [
     svelte({
@@ -29,17 +30,23 @@ export default {
           allowNonTsExtensions: true,
         },
       }),
-      css: css => css.write('dist/bundle.css', false),
+      css: css => {
+        css.write(`res/bundle.css`, false)
+
+        // Integrate css
+        concat([
+          `res/bundle.css`,
+          `res/global.css`
+        ]).then(result => fs.writeFileSync(`dist/kecap.css`, result))
+      }
     }),
 
     commonjs({ sourceMap: false }),
     resolve({ browser: true }),
     sucrase({ transforms: ['typescript'] }),
 
-    copy({ targets: [{ src: 'res/*', dest: 'dist' }] }),
-
     !production && livereload('dist'),
     !production && serve('./test'),
-    production && terser(),
+    production && terser()
   ],
 }
