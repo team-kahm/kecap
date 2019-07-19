@@ -14,7 +14,7 @@ const env = createEnv()
 export default {
   input: 'src/main.ts',
   output: {
-    sourcemap: true,
+    sourcemap: false,
     format: 'iife',
     name: 'app',
     file: 'dist/bundle.js',
@@ -29,10 +29,10 @@ export default {
           allowNonTsExtensions: true,
         },
       }),
-      css: css => css.write('dist/bundle.css'),
+      css: css => css.write('dist/bundle.css', false),
     }),
 
-    commonjs(),
+    commonjs({ sourceMap: false }),
     resolve({ browser: true }),
     sucrase({ transforms: ['typescript'] }),
 

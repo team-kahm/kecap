@@ -10,7 +10,8 @@
       "dom"
     ],
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "sourceMap": false,
   },
   "include": [
     "src/**/*"
