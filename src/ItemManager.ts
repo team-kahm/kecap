@@ -28,10 +28,9 @@ export default class ItemManager {
 
   private isXDir: boolean;
 
-  public constructor(element: HTMLElement, option?: ItemManagerOptions) {
+  public constructor(element: HTMLElement, option?: Partial<ItemManagerOptions>) {
     this.items = [];
     this.elem = element;
-    this.addElements(Array.from(this.elem.children) as HTMLElement[]);
     this.option = {
       lazyload: 20,
       selectedClass: 'selected',
@@ -48,6 +47,7 @@ export default class ItemManager {
     if (option) Object.assign(this.option, option);
 
     this.isXDir = this.option.direction === EnumDirection.DIRECTION_X;
+    this.addElements(Array.from(this.elem.children[0].children) as HTMLElement[]);
   }
 
   public addElements(elements: HTMLElement[]): void {
@@ -94,8 +94,8 @@ export default class ItemManager {
     const { scrollTop } = this.elem;
     const { scrollLeft } = this.elem;
 
-    let xCoord = 0;
-    let yCoord = 0;
+    let xCoord = -1;
+    let yCoord = -1;
 
     if (scrollTop < dimension.top) {
       yCoord = dimension.top;
@@ -104,22 +104,22 @@ export default class ItemManager {
     }
 
     if (scrollLeft < dimension.left) {
-      xCoord = dimension.left;
+      xCoord = dimension.left - width;
     } else if (scrollLeft + width < dimension.right) {
-      xCoord = dimension.right - width;
+      xCoord = dimension.right;
     }
 
     if (xCoord >= 0 || yCoord >= 0) {
       this.elem.scrollTo({
-        top: yCoord,
-        left: xCoord,
+        top: yCoord >= 0 ? yCoord : undefined,
+        left: xCoord >= 0 ? xCoord : undefined,
         behavior: 'smooth',
       });
     }
   }
 
   private select(x: number, y: number): void {
-    const checkDirection: number = this.isXDir ? y : x;
+    const checkDirection: number = this.isXDir ? x : y;
     if (checkDirection <= 0 || this.itemSize <= checkDirection) return;
 
     const index: number = this.getIndex(x, y);
@@ -161,7 +161,7 @@ export default class ItemManager {
   }
 
   public selectBelow(): void {
-    this.select(this.x, this.y - 1);
+    this.select(this.x, this.y + 1);
   }
 
   public selectLeft(): void {
