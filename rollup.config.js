@@ -39,7 +39,7 @@ export default {
     copy({ targets: [{ src: 'res/*', dest: 'dist' }] }),
 
     !production && livereload('dist'),
-    !production && serve('dist'),
+    !production && serve('./test'),
     production && terser(),
   ],
 }
