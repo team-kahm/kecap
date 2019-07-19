@@ -1,3 +1,10 @@
-import App from './App.svelte';
+import * as Kecap from './component/index'
 
-export default new App({ target: document.body });
+/**
+ * @description
+ * 브라우저에 Kecap 클래스 등록
+ */
+try{
+    // @ts-ignore
+    window.Kecap = Kecap
+}catch(e){}

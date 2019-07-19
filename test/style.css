@@ -1,0 +1,22 @@
+.viewport {
+    width: 302px;
+    height: 302px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 100px);
+    grid-gap: 1px;
+}
+
+.item {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+}
+
+.item.select {
+    background-color: red;
+}

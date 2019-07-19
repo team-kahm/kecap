@@ -1,15 +1,15 @@
-import commonjs from 'rollup-plugin-commonjs';
-import copy from 'rollup-plugin-copy';
-import livereload from 'rollup-plugin-livereload';
-import resolve from 'rollup-plugin-node-resolve';
-import serve from 'rollup-plugin-serve';
-import sucrase from 'rollup-plugin-sucrase';
-import svelte from 'rollup-plugin-svelte';
-import { terser } from 'rollup-plugin-terser';
-import { preprocess, createEnv, readConfigFile } from '@pyoner/svelte-ts-preprocess';
+import commonjs from 'rollup-plugin-commonjs'
+import copy from 'rollup-plugin-copy'
+import livereload from 'rollup-plugin-livereload'
+import resolve from 'rollup-plugin-node-resolve'
+import serve from 'rollup-plugin-serve'
+import sucrase from 'rollup-plugin-sucrase'
+import svelte from 'rollup-plugin-svelte'
+import { terser } from 'rollup-plugin-terser'
+import { preprocess, createEnv, readConfigFile } from '@pyoner/svelte-ts-preprocess'
 
-const production = !process.env.ROLLUP_WATCH;
-const env = createEnv();
+const production = !process.env.ROLLUP_WATCH
+const env = createEnv()
 
 export default {
   input: 'src/main.ts',
@@ -36,10 +36,10 @@ export default {
     resolve({ browser: true }),
     sucrase({ transforms: ['typescript'] }),
 
-    copy({ targets: [{ src: 'public/*', dest: 'dist' }] }),
+    copy({ targets: [{ src: 'res/*', dest: 'dist' }] }),
 
     !production && livereload('dist'),
     !production && serve('dist'),
     production && terser(),
   ],
-};
+}
