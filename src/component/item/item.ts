@@ -18,9 +18,9 @@ export class Item {
 
   private _selected: boolean
 
-  public constructor(element: HTMLElement, manager: ItemManager, index: number) {
+  public constructor(element: HTMLElement, manager: ItemManager, index?: number) {
     this.elem = element
-    this.index = index
+    this.index = index || -1
 
     this.attached = false
     this._selected = false
@@ -28,56 +28,11 @@ export class Item {
     this.manager = manager
   }
 
-  public attach(direction: number): void {
-    if (direction > 0) {
-      this.manager.elem.append(this.elem)
-    } else {
-      this.manager.elem.prepend(this.elem)
-    }
-
-    this.attached = true
+  public unselect(): void {
+    this.elem.classList.remove('select')
   }
 
-  public detach(): void {
-    this.manager.elem.removeChild(this.elem)
-    this.attached = false
-  }
-
-  public update(updateDirection: number, visibleRange: [number, number]): void {
-    if (visibleRange[0] <= this.index && this.index < visibleRange[1]) {
-      if (!this.attached) {
-        this.attach(updateDirection)
-      }
-    } else if (this.attached) {
-      this.detach()
-    }
-  }
-
-  public get scrollDimension(): ScrollDimension {
-    const { width, height } = this.elem.getBoundingClientRect()
-
-    return {
-      left: this.elem.offsetLeft,
-      right: this.elem.offsetLeft + width,
-      top: this.elem.offsetTop,
-      bottom: this.elem.offsetTop + height,
-    }
-  }
-
-  public get selected(): boolean {
-    return this._selected
-  }
-
-  public set selected(selected: boolean) {
-    const original: boolean = this.selected
-    if ((original && selected) || (!original && !selected)) return
-
-    if (selected) {
-      this.elem.classList.add(this.manager.option.selectedClass)
-    } else {
-      this.elem.classList.remove(this.manager.option.selectedClass)
-    }
-
-    this._selected = selected
+  public select(): void {
+    this.elem.classList.add('select')
   }
 }

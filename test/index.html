@@ -11,86 +11,135 @@
     <link rel='stylesheet' href='./style.css'>
 
     <!-- Kecap 스타일시트와 스크립트를 불러옵니다. -->
-	<link rel='stylesheet' href='../dist/kecap.css'>
+    <link rel='stylesheet' href='../dist/kecap.css'>
     <script src='../dist/kecap.js'></script>
 
 </head>
 
 <body>
-    <div class="viewport">
-
-        <div class="grid">
-            <span class="item select">0</span>
-            <span class="item">1</span>
-            <span class="item">2</span>
-            <span class="item">3</span>
-            <span class="item">4</span>
-            <span class="item">5</span>
-            <span class="item">6</span>
-            <span class="item">7</span>
-            <span class="item">8</span>
-            <span class="item">9</span>
-            <span class="item">10</span>
-            <span class="item">11</span>
-            <span class="item">12</span>
-            <span class="item">13</span>
-            <span class="item">14</span>
-            <span class="item">15</span>
-            <span class="item">16</span>
-            <span class="item">17</span>
-            <span class="item">18</span>
-            <span class="item">19</span>
-            <span class="item">20</span>
-            <span class="item">21</span>
-            <span class="item">22</span>
-            <span class="item">23</span>
-            <span class="item">24</span>
-            <span class="item">25</span>
-            <span class="item">26</span>
-            <span class="item">27</span>
-            <span class="item">28</span>
-            <span class="item">29</span>
-            <span class="item">30</span>
-            <span class="item">31</span>
-            <span class="item">32</span>
-            <span class="item">33</span>
-            <span class="item">34</span>
-            <span class="item">35</span>
-            <span class="item">36</span>
-            <span class="item">37</span>
-            <span class="item">38</span>
-            <span class="item">39</span>
-            <span class="item">40</span>
-            <span class="item">41</span>
+    <div class="type-a">
+        <h1>1×10 Grid</h1>
+        <div class="viewport">
+            <div class="grid">
+                <span class="item select">0</span>
+                <span class="item">1</span>
+                <span class="item">2</span>
+                <span class="item">3</span>
+                <span class="item">4</span>
+                <span class="item">5</span>
+                <span class="item">6</span>
+                <span class="item">7</span>
+                <span class="item">8</span>
+                <span class="item">9</span>
+            </div>
         </div>
+        <button id="left">left</button>
+        <button id="right">right</button>
     </div>
-    <button id="below">below</button>
+
+    <div class="type-b">
+        <h1>6×6 Grid</h1>
+        <div class="viewport">
+            <div class="grid">
+                <span class="item select">0</span>
+                <span class="item">1</span>
+                <span class="item">2</span>
+                <span class="item">3</span>
+                <span class="item">4</span>
+                <span class="item">5</span>
+                <span class="item">6</span>
+                <span class="item">7</span>
+                <span class="item">8</span>
+                <span class="item">9</span>
+                <span class="item">10</span>
+                <span class="item">11</span>
+                <span class="item">12</span>
+                <span class="item">13</span>
+                <span class="item">14</span>
+                <span class="item">15</span>
+                <span class="item">16</span>
+                <span class="item">17</span>
+                <span class="item">18</span>
+                <span class="item">19</span>
+                <span class="item">20</span>
+                <span class="item">21</span>
+                <span class="item">22</span>
+                <span class="item">23</span>
+                <span class="item">24</span>
+                <span class="item">25</span>
+                <span class="item">26</span>
+                <span class="item">27</span>
+                <span class="item">28</span>
+                <span class="item">29</span>
+                <span class="item">30</span>
+                <span class="item">31</span>
+                <span class="item">32</span>
+                <span class="item">33</span>
+                <span class="item">34</span>
+                <span class="item">35</span>
+            </div>
+        </div>
+        <button id="above">above</button>
+        <button id="below">below</button>
+        <button id="left">left</button>
+        <button id="right">right</button>
+    </div>
 
     <script type="module">
-
-        const manager =
-            new window.Kecap.ItemManager(
-
-                // 뷰포트 엘레먼트를 지정합니다.
-                document.querySelector('.viewport'),
-
-                // 옵션을 지정합니다.
-                {
-                    lazyload: 20,
-                    selectedClass: 'selected',
-                    itemRow: 10,
-                    itemCol: 10,
-                    viewportRow: 3,
-                    viewportCol: 3,
-                    direction: 'DIRECTION_X',
-                }
+        const managerA = new window.Kecap.ItemManager(
+            document.querySelector('.type-a .viewport'),
+            {
+                itemRow: 1,
+                itemCol: 10,
+                viewportRow: 1,
+                viewportCol: 3,
+                strategy: 0 // Type A
+            }
         )
+        document.querySelector('.type-a #left')
+            .addEventListener('click', () => {
+                console.log('left')
+                managerA.selectLeft()
+            })
+        document.querySelector('.type-a #right')
+            .addEventListener('click', () => {
+                console.log('right')
+                managerA.selectRight()
+            })
 
-        document.querySelector('#below').addEventListener('click', () => {
-            console.log('below')
-            manager.selectBelow()
-        })
+        const managerB = new window.Kecap.ItemManager(
+            document.querySelector('.type-b .viewport'),
+            {
+                itemRow: 6,
+                itemCol: 6,
+                viewportRow: 3,
+                viewportCol: 3,
+                strategy: 1 // Type B
+            }
+        )
+        document.querySelector('.type-b #above')
+            .addEventListener('click', () => {
+                console.log('above')
+                managerB.selectAbove()
+            })
+        document.querySelector('.type-b #below')
+            .addEventListener('click', () => {
+                console.log('below')
+                managerB.selectBelow()
+            })
+        document.querySelector('.type-b #left')
+            .addEventListener('click', () => {
+                console.log('left')
+                managerB.selectLeft()
+            })
+        document.querySelector('.type-b #right')
+            .addEventListener('click', () => {
+                console.log('right')
+                managerB.selectRight()
+            })
+
     </script>
 
 </body>
+
 </html>

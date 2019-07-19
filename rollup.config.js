@@ -30,15 +30,15 @@ export default {
           allowNonTsExtensions: true,
         },
       }),
-      css: css => {
+      css: (css) => {
         css.write(`res/bundle.css`, false)
 
         // Integrate css
         concat([
           `res/bundle.css`,
-          `res/global.css`
+          `res/global.css`,
         ]).then(result => fs.writeFileSync(`dist/kecap.css`, result))
-      }
+      },
     }),
 
     commonjs({ sourceMap: false }),
@@ -47,6 +47,6 @@ export default {
 
     !production && livereload('dist'),
     !production && serve('./test'),
-    production && terser()
+    production && terser(),
   ],
 }

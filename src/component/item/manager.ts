@@ -1,203 +1,274 @@
 import { Item, ScrollDimension } from './item'
 
-export enum EnumDirection {
-  DIRECTION_X,
-  DIRECTION_Y
+function sum(nums: number[]): number {
+  return nums.reduce((acc, cur): number => acc + cur, 0)
 }
+
+export enum ScrollBehavior {
+  TYPE_A,
+  TYPE_B
+}
+
 export interface ItemManagerOptions {
-  lazyload: number
-  selectedClass: string
+  /** 미리 로딩할 엘리먼트 칸 수 */
+  preload: number
+  /** 전체 아이템 그리드 행 크기 */
   itemRow: number
+  /** 전체 아이템 그리드 열 크기 */
   itemCol: number
+  /** 보여지는 아이템 그리드 행 크기 */
   viewportRow: number
+  /** 보여지는 아이템 그리드 열 크기 */
   viewportCol: number
-  direction: EnumDirection
+  /** 스크롤 작동 방법 */
+  strategy: ScrollBehavior
 }
 
 export class ItemManager {
-  public elem: HTMLElement
+  /** 카로셀 그리드 엘리먼트 */
+  private element: HTMLElement
 
-  public items: Item[]
+  /** 아이템 엘리먼트 배열 */
+  private items: Item[]
 
-  public option: ItemManagerOptions
+  /** 미리 로딩할 엘리먼트 칸 수 */
+  public preload = 1
 
-  public x: number
+  /** 선택한 엘리먼트 행 위치 */
+  private row = 0
 
-  public y: number
+  /** 선택한 엘리먼트 열 위치 */
+  private col = 0
 
-  private isXDir: boolean
+  /** 전체 아이템 그리드 행 크기 */
+  public itemRow = 6
 
-  public constructor(element: HTMLElement, option?: Partial<ItemManagerOptions>) {
+  /** 전체 아이템 그리드 열 크기 */
+  public itemCol = 6
+
+  /** 보여지는 아이템 그리드 행 위치 */
+  private viewRow = 0
+
+  /** 보여지는 아이템 그리드 열 위치 */
+  private viewCol = 0
+
+  /** 보여지는 아이템 그리드 행 크기 */
+  public viewportRow = 3
+
+  /** 보여지는 아이템 그리드 열 크기 */
+  public viewportCol = 3
+
+  /** 스크롤 작동 방법 */
+  public strategy = ScrollBehavior.TYPE_A
+
+  public constructor(element: HTMLElement, options?: Partial<ItemManagerOptions>) {
+    this.element = element
     this.items = []
-    this.elem = element
-    this.option = {
-      lazyload: 20,
-      selectedClass: 'selected',
-      itemRow: 10,
-      itemCol: 10,
-      viewportRow: 3,
-      viewportCol: 3,
-      direction: EnumDirection.DIRECTION_X,
-    }
-
-    this.x = 0
-    this.y = 0
-
-    if (option) Object.assign(this.option, option)
-
-    this.isXDir = this.option.direction === EnumDirection.DIRECTION_X
-    this.addElements(Array.from(this.elem.children[0].children) as HTMLElement[])
+    Object.assign(this, options)
+    this.addElements(Array.from(this.element.children[0].children) as HTMLElement[])
   }
 
+  /**
+   * 그리드에 엘리먼트를 추가합니다.
+   * @param element
+   */
+  public addElement(element: HTMLElement): void {
+    this.addItem(new Item(element, this))
+  }
+
+  /**
+   * 그리드에 엘리먼트를 추가합니다.
+   * @param elements
+   */
   public addElements(elements: HTMLElement[]): void {
-    this.addItems(elements.map((elem: HTMLElement, index: number): Item => {
-      const item: Item = new Item(elem, this, this.items.length + index)
-      item.attached = true
-
-      return item
-    }))
+    this.addItems(elements.map((element): Item => new Item(element, this)))
   }
 
+  /**
+   * 그리드에 아이템을 추가합니다.
+   * @param item
+   */
+  public addItem(item: Item): void {
+    this.items.push(item)
+  }
+
+  /**
+   * 그리드에 아이템을 추가합니다.
+   * @param items
+   */
   public addItems(items: Item[]): void {
     this.items = this.items.concat(items)
-    this.updateItems(items)
   }
 
-  public updateItems(items = this.items, updateDirection = 1, updateIndex = false): void {
-    const targets = updateDirection > 0 ? items : items.reverse()
-
-    const visibleRange: [number, number] = [
-      ((this.isXDir ? this.x : this.y) - this.option.lazyload) * this.itemSize,
-      ((this.isXDir ? this.x : this.y) + this.option.lazyload) * this.itemSize,
-    ]
-
-    targets.forEach((item): void => {
-      item.update(updateDirection, visibleRange)
-    })
-
-    if (updateIndex) {
-      for (let i = 0; i < this.items.length; i += 1) {
-        if (targets.includes(this.items[i])) this.items[i].index = i
+  private scrollAbove(): void {
+    if (this.viewRow > 0) {
+      switch (this.strategy) {
+        case ScrollBehavior.TYPE_A:
+          this.viewRow -= 1
+          const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+          const top = sum(topElements.map(item => item.elem.offsetHeight))
+          this.element.scrollTo({
+            top,
+            behavior: 'smooth',
+          })
+          break;
+        case ScrollBehavior.TYPE_B:
+          if (this.row === this.viewRow - 1) {
+            this.viewRow -= 1
+            const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+            const top = sum(topElements.map(item => item.elem.offsetWidth))
+            this.element.scrollTo({
+              top,
+              behavior: 'smooth',
+            })
+          }
+          break;
+        default:
+          throw new Error('Unknown scroll behavior')
       }
+    } else {
+      console.log('top edge')
     }
   }
 
-  private getIndex(x: number, y: number): number {
-    if (this.isXDir) return x * this.itemSize + y
-
-    return y * this.itemSize + x
-  }
-
-  private scrollNotIfVisible(dimension: ScrollDimension): void {
-    const { width, height } = this.elem.getBoundingClientRect()
-    const { scrollTop } = this.elem
-    const { scrollLeft } = this.elem
-
-    let xCoord = -1
-    let yCoord = -1
-
-    if (scrollTop < dimension.top) {
-      yCoord = dimension.top
-    } else if (scrollTop + height < dimension.bottom) {
-      yCoord = dimension.bottom - height
-    }
-
-    if (scrollLeft < dimension.left) {
-      xCoord = dimension.left - width
-    } else if (scrollLeft + width < dimension.right) {
-      xCoord = dimension.right
-    }
-
-    if (xCoord >= 0 || yCoord >= 0) {
-      this.elem.scrollTo({
-        top: yCoord >= 0 ? yCoord : undefined,
-        left: xCoord >= 0 ? xCoord : undefined,
-        behavior: 'smooth',
-      })
+  private scrollBelow(): void {
+    if (this.viewRow + this.viewportRow < this.itemRow) {
+      switch (this.strategy) {
+        case ScrollBehavior.TYPE_A:
+          this.viewRow += 1
+          const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+          const top = sum(topElements.map(item => item.elem.offsetWidth))
+          this.element.scrollTo({
+            top,
+            behavior: 'smooth',
+          })
+          break;
+        case ScrollBehavior.TYPE_B:
+          if (this.row === this.viewRow + this.viewportRow) {
+            this.viewRow += 1
+            const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+            const top = sum(topElements.map(item => item.elem.offsetWidth))
+            this.element.scrollTo({
+              top,
+              behavior: 'smooth',
+            })
+          }
+          break;
+        default:
+          throw new Error('Unknown scroll behavior')
+      }
+    } else {
+      console.log('bottom edge')
     }
   }
 
-  private select(x: number, y: number): void {
-    const checkDirection: number = this.isXDir ? x : y
-    if (checkDirection <= 0 || this.itemSize <= checkDirection) return
-
-    const index: number = this.getIndex(x, y)
-    if (index <= 0 || this.items.length <= index) return
-
-    this.items[this.getIndex(this.x, this.y)].selected = false
-    this.items[index].selected = true
-
-    const deltaDirection: number = this.isXDir ? x - this.x : y - this.y
-
-    this.x = x
-    this.y = y
-
-    const { scrollDimension } = this.items[index]
-    this.scrollNotIfVisible(scrollDimension)
-
-    if (deltaDirection === 0) return
-
-    let edgeItems: Item[] = []
-    const directionValue: number = (this.isXDir ? this.x : this.y)
-
-    const foreValue: number = directionValue - this.option.lazyload
-    edgeItems = edgeItems.concat(this.items.slice(
-      Math.max(0, foreValue * this.itemSize - this.itemSize),
-      this.itemSize,
-    ))
-
-    const backValue: number = directionValue + this.option.lazyload
-    edgeItems = edgeItems.concat(this.items.slice(
-      Math.min(this.items.length, backValue * this.itemSize),
-      this.itemSize,
-    ))
-
-    this.updateItems(edgeItems, deltaDirection)
+  private scrollLeft(): void {
+    if (this.viewCol > 0) {
+      switch (this.strategy) {
+        case ScrollBehavior.TYPE_A:
+          this.viewCol -= 1
+          const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+          const left = sum(leftElements.map(item => item.elem.offsetHeight))
+          this.element.scrollTo({
+            left,
+            behavior: 'smooth',
+          })
+          break;
+        case ScrollBehavior.TYPE_B:
+          if (this.col === this.viewCol - 1) {
+            this.viewCol -= 1
+            const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+            const left = sum(leftElements.map(item => item.elem.offsetHeight))
+            this.element.scrollTo({
+              left,
+              behavior: 'smooth',
+            })
+          }
+          break;
+        default:
+          throw new Error('Unknown scroll behavior')
+      }
+    } else {
+      console.log('top edge')
+    }
   }
 
+  private scrollRight(): void {
+    if (this.viewCol + this.viewportCol < this.itemCol) {
+      switch (this.strategy) {
+        case ScrollBehavior.TYPE_A:
+          this.viewCol += 1
+          const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+          const left = sum(leftElements.map(item => item.elem.offsetHeight))
+          this.element.scrollTo({
+            left,
+            behavior: 'smooth',
+          })
+          break;
+        case ScrollBehavior.TYPE_B:
+          if (this.col === this.viewCol + this.viewportCol) {
+            this.viewCol += 1
+            const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+            const left = sum(leftElements.map(item => item.elem.offsetHeight))
+            this.element.scrollTo({
+              left,
+              behavior: 'smooth',
+            })
+          }
+          break;
+        default:
+          throw new Error('Unknown scroll behavior')
+      }
+    } else {
+      console.log('right edge')
+    }
+  }
+
+  /**
+   * 현재 위치에서 위쪽 아이템을 선택합니다.
+   */
   public selectAbove(): void {
-    this.select(this.x, this.y - 1)
+    if (this.row > 0) {
+      this.items[this.row * this.itemCol + this.col].unselect()
+      this.row -= 1
+      this.items[this.row * this.itemCol + this.col].select()
+    }
+    this.scrollAbove()
   }
 
+  /**
+   * 현재 위치에서 아래쪽 아이템을 선택합니다.
+   */
   public selectBelow(): void {
-    this.select(this.x, this.y + 1)
+    if (this.row < this.itemRow - 1) {
+      this.items[this.row * this.itemCol + this.col].unselect()
+      this.row += 1
+      this.items[this.row * this.itemCol + this.col].select()
+    }
+    this.scrollBelow()
   }
 
+  /**
+   * 현재 위치에서 왼쪽 아이템을 선택합니다.
+   */
   public selectLeft(): void {
-    this.select(this.x - 1, this.y)
+    if (this.col > 0) {
+      this.items[this.row * this.itemCol + this.col].unselect()
+      this.col -= 1
+      this.items[this.row * this.itemCol + this.col].select()
+    }
+    this.scrollLeft()
   }
 
+  /**
+   * 현재 위치에서 오른쪽 아이템을 선택합니다.
+   */
   public selectRight(): void {
-    this.select(this.x + 1, this.y)
-  }
-
-  public get viewportSize(): number {
-    if (this.isXDir) {
-      return this.option.viewportCol
+    if (this.col < this.itemCol - 1) {
+      this.items[this.row * this.itemCol + this.col].unselect()
+      this.col += 1
+      this.items[this.row * this.itemCol + this.col].select()
     }
-    return this.option.viewportRow
-  }
-
-  public set viewportSize(viewportSize: number) {
-    if (this.isXDir) {
-      this.option.viewportCol = viewportSize
-    } else {
-      this.option.viewportRow = viewportSize
-    }
-  }
-
-  public get itemSize(): number {
-    if (this.isXDir) {
-      return this.option.itemCol
-    }
-    return this.option.itemRow
-  }
-
-  public set itemSize(itemSize: number) {
-    if (this.isXDir) {
-      this.option.itemCol = itemSize
-    } else {
-      this.option.itemRow = itemSize
-    }
+    this.scrollRight()
   }
 }
