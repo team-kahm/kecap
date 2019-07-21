@@ -69,6 +69,20 @@ export class ItemManager {
   }
 
   /**
+   * 현재 선택된 아이템
+   */
+  public get selectedItem(): Item {
+    return this.items[this.row * this.itemCol + this.col]
+  }
+
+  /**
+   * 현재 선택된 아이템
+   */
+  public set selectedItem(item: Item) {
+    throw new Error("not implemented")
+  }
+
+  /**
    * 그리드에 엘리먼트를 추가합니다.
    * @param element
    */
@@ -100,128 +114,96 @@ export class ItemManager {
     this.items = this.items.concat(items)
   }
 
+  /**
+   * 보여지는 화면을 위로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollAbove(): boolean {
+    return this.viewRow > 0 && (
+      this.strategy === ScrollBehavior.TYPE_A
+      || (this.strategy === ScrollBehavior.TYPE_B && this.row === this.viewRow - 1)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 아래로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollBelow(): boolean {
+    return this.viewRow + this.viewportRow < this.itemRow && (
+      this.strategy === ScrollBehavior.TYPE_A
+      || (this.strategy === ScrollBehavior.TYPE_B && this.row === this.viewRow + this.viewportRow)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 왼쪽으로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollLeft(): boolean {
+    return this.viewCol > 0 && (
+      this.strategy === ScrollBehavior.TYPE_A
+      || (this.strategy === ScrollBehavior.TYPE_B && this.col === this.viewCol - 1)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 오른쪽으로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollRight(): boolean {
+    return this.viewCol + this.viewportCol < this.itemCol && (
+      this.strategy === ScrollBehavior.TYPE_A
+      || (this.strategy === ScrollBehavior.TYPE_B && this.col === this.viewCol + this.viewportCol)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 위로 움직입니다.
+   */
   private scrollAbove(): void {
-    if (this.viewRow > 0) {
-      switch (this.strategy) {
-        case ScrollBehavior.TYPE_A:
-          this.viewRow -= 1
-          const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-          const top = sum(topElements.map(item => item.elem.offsetHeight))
-          this.element.scrollTo({
-            top,
-            behavior: 'smooth',
-          })
-          break;
-        case ScrollBehavior.TYPE_B:
-          if (this.row === this.viewRow - 1) {
-            this.viewRow -= 1
-            const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-            const top = sum(topElements.map(item => item.elem.offsetWidth))
-            this.element.scrollTo({
-              top,
-              behavior: 'smooth',
-            })
-          }
-          break;
-        default:
-          throw new Error('Unknown scroll behavior')
-      }
-    } else {
-      console.log('top edge')
-    }
+    this.viewRow -= 1
+    const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+    const top = sum(topElements.map(item => item.elem.offsetHeight))
+    this.element.scrollTo({
+      top,
+      behavior: 'smooth',
+    })
   }
 
+  /**
+   * 보여지는 화면을 아래로 움직입니다.
+   */
   private scrollBelow(): void {
-    if (this.viewRow + this.viewportRow < this.itemRow) {
-      switch (this.strategy) {
-        case ScrollBehavior.TYPE_A:
-          this.viewRow += 1
-          const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-          const top = sum(topElements.map(item => item.elem.offsetWidth))
-          this.element.scrollTo({
-            top,
-            behavior: 'smooth',
-          })
-          break;
-        case ScrollBehavior.TYPE_B:
-          if (this.row === this.viewRow + this.viewportRow) {
-            this.viewRow += 1
-            const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-            const top = sum(topElements.map(item => item.elem.offsetWidth))
-            this.element.scrollTo({
-              top,
-              behavior: 'smooth',
-            })
-          }
-          break;
-        default:
-          throw new Error('Unknown scroll behavior')
-      }
-    } else {
-      console.log('bottom edge')
-    }
+    this.viewRow += 1
+    const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
+    const top = sum(topElements.map(item => item.elem.offsetWidth))
+    this.element.scrollTo({
+      top,
+      behavior: 'smooth',
+    })
   }
 
+  /**
+   * 보여지는 화면을 왼쪽으로 움직입니다.
+   */
   private scrollLeft(): void {
-    if (this.viewCol > 0) {
-      switch (this.strategy) {
-        case ScrollBehavior.TYPE_A:
-          this.viewCol -= 1
-          const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-          const left = sum(leftElements.map(item => item.elem.offsetHeight))
-          this.element.scrollTo({
-            left,
-            behavior: 'smooth',
-          })
-          break;
-        case ScrollBehavior.TYPE_B:
-          if (this.col === this.viewCol - 1) {
-            this.viewCol -= 1
-            const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-            const left = sum(leftElements.map(item => item.elem.offsetHeight))
-            this.element.scrollTo({
-              left,
-              behavior: 'smooth',
-            })
-          }
-          break;
-        default:
-          throw new Error('Unknown scroll behavior')
-      }
-    } else {
-      console.log('top edge')
-    }
+    this.viewCol -= 1
+    const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+    const left = sum(leftElements.map(item => item.elem.offsetHeight))
+    this.element.scrollTo({
+      left,
+      behavior: 'smooth',
+    })
   }
 
+  /**
+   * 보여지는 화면을 오른쪽으로 움직입니다.
+   */
   private scrollRight(): void {
-    if (this.viewCol + this.viewportCol < this.itemCol) {
-      switch (this.strategy) {
-        case ScrollBehavior.TYPE_A:
-          this.viewCol += 1
-          const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-          const left = sum(leftElements.map(item => item.elem.offsetHeight))
-          this.element.scrollTo({
-            left,
-            behavior: 'smooth',
-          })
-          break;
-        case ScrollBehavior.TYPE_B:
-          if (this.col === this.viewCol + this.viewportCol) {
-            this.viewCol += 1
-            const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-            const left = sum(leftElements.map(item => item.elem.offsetHeight))
-            this.element.scrollTo({
-              left,
-              behavior: 'smooth',
-            })
-          }
-          break;
-        default:
-          throw new Error('Unknown scroll behavior')
-      }
-    } else {
-      console.log('right edge')
-    }
+    this.viewCol += 1
+    const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
+    const left = sum(leftElements.map(item => item.elem.offsetHeight))
+    this.element.scrollTo({
+      left,
+      behavior: 'smooth',
+    })
   }
 
   /**
@@ -229,11 +211,13 @@ export class ItemManager {
    */
   public selectAbove(): void {
     if (this.row > 0) {
-      this.items[this.row * this.itemCol + this.col].unselect()
+      this.selectedItem.unselect()
       this.row -= 1
-      this.items[this.row * this.itemCol + this.col].select()
+      this.selectedItem.select()
     }
-    this.scrollAbove()
+    if (this.checkScrollAbove()) {
+      this.scrollAbove()
+    }
   }
 
   /**
@@ -241,11 +225,13 @@ export class ItemManager {
    */
   public selectBelow(): void {
     if (this.row < this.itemRow - 1) {
-      this.items[this.row * this.itemCol + this.col].unselect()
+      this.selectedItem.unselect()
       this.row += 1
-      this.items[this.row * this.itemCol + this.col].select()
+      this.selectedItem.select()
     }
-    this.scrollBelow()
+    if (this.checkScrollBelow()) {
+      this.scrollBelow()
+    }
   }
 
   /**
@@ -253,11 +239,13 @@ export class ItemManager {
    */
   public selectLeft(): void {
     if (this.col > 0) {
-      this.items[this.row * this.itemCol + this.col].unselect()
+      this.selectedItem.unselect()
       this.col -= 1
-      this.items[this.row * this.itemCol + this.col].select()
+      this.selectedItem.select()
     }
-    this.scrollLeft()
+    if (this.checkScrollLeft()) {
+      this.scrollLeft()
+    }
   }
 
   /**
@@ -265,10 +253,12 @@ export class ItemManager {
    */
   public selectRight(): void {
     if (this.col < this.itemCol - 1) {
-      this.items[this.row * this.itemCol + this.col].unselect()
+      this.selectedItem.unselect()
       this.col += 1
-      this.items[this.row * this.itemCol + this.col].select()
+      this.selectedItem.select()
     }
-    this.scrollRight()
+    if (this.checkScrollRight()) {
+      this.scrollRight()
+    }
   }
 }
