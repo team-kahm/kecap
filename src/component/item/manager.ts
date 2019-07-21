@@ -1,4 +1,4 @@
-import { Item, ScrollDimension } from './item'
+import { Item } from './item'
 
 function sum(nums: number[]): number {
   return nums.reduce((acc, cur): number => acc + cur, 0)
@@ -11,7 +11,7 @@ export enum ScrollBehavior {
 
 export interface ItemManagerOptions {
   /** 미리 로딩할 엘리먼트 칸 수 */
-  preload: number
+  preloadLimit: number
   /** 전체 아이템 그리드 행 크기 */
   itemRow: number
   /** 전체 아이템 그리드 열 크기 */
@@ -32,7 +32,7 @@ export class ItemManager {
   private items: Item[]
 
   /** 미리 로딩할 엘리먼트 칸 수 */
-  public preload = 1
+  public preloadLimit = 1
 
   /** 선택한 엘리먼트 행 위치 */
   private row = 0
@@ -65,7 +65,21 @@ export class ItemManager {
     this.element = element
     this.items = []
     Object.assign(this, options)
+
+    // 엘리먼트를 아이템으로 변환해 배열에 저장합니다.
     this.addElements(Array.from(this.element.children[0].children) as HTMLElement[])
+
+    // 아이템을 로드합니다.
+    const startRow = Math.max(this.viewRow - this.preloadLimit, 0)
+    const endRow = Math.min(this.viewRow + this.viewportRow + this.preloadLimit, this.itemRow)
+    const startCol = Math.max(this.viewCol - this.preloadLimit, 0)
+    const endCol = Math.min(this.viewCol + this.viewportCol + this.preloadLimit, this.itemCol)
+    for (let row = startRow; row < endRow; row += 1) {
+      for (let col = startCol; col < endCol; col += 1) {
+        const item = this.items[row * this.itemCol + col]
+        item.load()
+      }
+    }
   }
 
   /**
@@ -155,6 +169,70 @@ export class ItemManager {
   }
 
   /**
+   * 보여지는 화면 위쪽 아이템을 미리 로딩합니다.
+   */
+  private preloadAbove(): void {
+    const startRow = Math.max(this.viewRow - this.preloadLimit, 0)
+    const endRow = this.viewRow
+    const startCol = Math.max(this.viewCol - this.preloadLimit, 0)
+    const endCol = this.viewCol + this.viewportCol + this.preloadLimit
+    for (let row = startRow; row < endRow; row += 1) {
+      for (let col = startCol; col < endCol; col += 1) {
+        const item = this.items[row * this.itemCol + col]
+        item.load()
+      }
+    }
+  }
+
+  /**
+   * 보여지는 화면 아래쪽 아이템을 미리 로딩합니다.
+   */
+  private preloadBelow(): void {
+    const startRow = this.viewRow + this.viewportRow
+    const endRow = Math.min(this.viewRow + this.viewportRow + this.preloadLimit, this.itemRow)
+    const startCol = Math.max(this.viewCol - this.preloadLimit, 0)
+    const endCol = this.viewCol + this.viewportCol + this.preloadLimit
+    for (let row = startRow; row < endRow; row += 1) {
+      for (let col = startCol; col < endCol; col += 1) {
+        const item = this.items[row * this.itemCol + col]
+        item.load()
+      }
+    }
+  }
+
+  /**
+   * 보여지는 화면 왼쪽 아이템을 미리 로딩합니다.
+   */
+  private preloadLeft(): void {
+    const startRow = Math.max(this.viewRow - this.preloadLimit, 0)
+    const endRow = this.viewRow + this.viewportRow + this.preloadLimit
+    const startCol = Math.max(this.viewCol - this.preloadLimit, 0)
+    const endCol = this.viewCol
+    for (let row = startRow; row < endRow; row += 1) {
+      for (let col = startCol; col < endCol; col += 1) {
+        const item = this.items[row * this.itemCol + col]
+        item.load()
+      }
+    }
+  }
+
+  /**
+   * 보여지는 화면 오른쪽 아이템을 미리 로딩합니다.
+   */
+  private preloadRight(): void {
+    const startRow = Math.max(this.viewRow - this.preloadLimit, 0)
+    const endRow = this.viewRow + this.viewportRow + this.preloadLimit
+    const startCol = this.viewCol + this.viewportCol
+    const endCol = Math.min(this.viewCol + this.viewportCol + this.preloadLimit, this.itemCol)
+    for (let row = startRow; row < endRow; row += 1) {
+      for (let col = startCol; col < endCol; col += 1) {
+        const item = this.items[row * this.itemCol + col]
+        item.load()
+      }
+    }
+  }
+
+  /**
    * 보여지는 화면을 위로 움직입니다.
    */
   private scrollAbove(): void {
@@ -218,6 +296,7 @@ export class ItemManager {
     if (this.checkScrollAbove()) {
       this.scrollAbove()
     }
+    this.preloadAbove()
   }
 
   /**
@@ -232,6 +311,7 @@ export class ItemManager {
     if (this.checkScrollBelow()) {
       this.scrollBelow()
     }
+    this.preloadBelow()
   }
 
   /**
@@ -246,6 +326,7 @@ export class ItemManager {
     if (this.checkScrollLeft()) {
       this.scrollLeft()
     }
+    this.preloadLeft()
   }
 
   /**
@@ -260,5 +341,6 @@ export class ItemManager {
     if (this.checkScrollRight()) {
       this.scrollRight()
     }
+    this.preloadRight()
   }
 }

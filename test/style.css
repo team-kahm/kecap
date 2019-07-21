@@ -33,3 +33,7 @@
 .item.select {
     background-color: red;
 }
+
+.item.ready {
+    color: orange;
+}

@@ -1,12 +1,5 @@
 import { ItemManager } from './manager'
 
-export interface ScrollDimension {
-  left: number
-  right: number
-  top: number
-  bottom: number
-}
-
 export class Item {
   public elem: HTMLElement
 
@@ -34,5 +27,9 @@ export class Item {
 
   public select(): void {
     this.elem.classList.add('select')
+  }
+
+  public load(): void{
+    this.elem.classList.add('ready')
   }
 }
