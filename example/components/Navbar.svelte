@@ -1,0 +1,39 @@
+<aside class="Navbar">
+  <nav class="Navbar__list">
+    <img class="Navbar__branding" alt="Kecap Logo" src="/KecapLogoSmall.png">
+    <a href="#main">Kecap</a>
+    <a href="#tryout">Try It</a>
+    <a href="#install">Installation</a>
+    <a href="#usage">Usage</a>
+  </nav>
+</aside>
+
+<style>
+  .Navbar {
+    background: #e1e2e3;
+    width: 15vw;
+    max-width: 200px;
+    padding: 20px;
+  }
+
+  .Navbar__branding {
+    width: 10vw;
+    max-width: 133px;
+  }
+
+  .Navbar__list a{
+    color: #202020;
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-top: 1.2rem;
+    display: block;
+  }
+
+  @media (max-width: 1024px) {
+    .Navbar {
+      display: none;
+    }
+  }
+</style>

@@ -36,7 +36,7 @@ export default {
     resolve({ browser: true }),
     sucrase({ transforms: ['typescript'] }),
 
-    copy({ targets: [{ src: 'public/*', dest: 'dist' }] }),
+    copy({ targets: [{ src: 'public/*', dest: 'dist' }, { src: 'example/assets/*', dest: 'dist/example/assets' }] }),
 
     !production && livereload('dist'),
     !production && serve('dist'),
