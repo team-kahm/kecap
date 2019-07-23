@@ -1,5 +1,3 @@
-import { Item } from './item'
-
 function sum(nums: number[]): number {
   return nums.reduce((acc, cur): number => acc + cur, 0)
 }
@@ -7,6 +5,26 @@ function sum(nums: number[]): number {
 export enum ScrollBehavior {
   TYPE_A,
   TYPE_B
+}
+
+export class Item {
+  public element: HTMLElement
+
+  public constructor(element: HTMLElement) {
+    this.element = element
+  }
+
+  public unselect(): void {
+    this.element.classList.remove('select')
+  }
+
+  public select(): void {
+    this.element.classList.add('select')
+  }
+
+  public load(): void{
+    this.element.classList.add('ready')
+  }
 }
 
 export interface ItemManagerOptions {
@@ -101,7 +119,7 @@ export class ItemManager {
    * @param element
    */
   public addElement(element: HTMLElement): void {
-    this.addItem(new Item(element, this))
+    this.addItem(new Item(element))
   }
 
   /**
@@ -109,7 +127,7 @@ export class ItemManager {
    * @param elements
    */
   public addElements(elements: HTMLElement[]): void {
-    this.addItems(elements.map((element): Item => new Item(element, this)))
+    this.addItems(elements.map((element): Item => new Item(element)))
   }
 
   /**
@@ -238,7 +256,7 @@ export class ItemManager {
   private scrollAbove(): void {
     this.viewRow -= 1
     const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-    const top = sum(topElements.map(item => item.elem.offsetHeight))
+    const top = sum(topElements.map(item => item.element.offsetHeight))
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -251,7 +269,7 @@ export class ItemManager {
   private scrollBelow(): void {
     this.viewRow += 1
     const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-    const top = sum(topElements.map(item => item.elem.offsetWidth))
+    const top = sum(topElements.map(item => item.element.offsetWidth))
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -264,7 +282,7 @@ export class ItemManager {
   private scrollLeft(): void {
     this.viewCol -= 1
     const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-    const left = sum(leftElements.map(item => item.elem.offsetHeight))
+    const left = sum(leftElements.map(item => item.element.offsetHeight))
     this.element.scrollTo({
       left,
       behavior: 'smooth',
@@ -277,7 +295,7 @@ export class ItemManager {
   private scrollRight(): void {
     this.viewCol += 1
     const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-    const left = sum(leftElements.map(item => item.elem.offsetHeight))
+    const left = sum(leftElements.map(item => item.element.offsetHeight))
     this.element.scrollTo({
       left,
       behavior: 'smooth',

@@ -9,6 +9,7 @@
     "lib": [
       "dom"
     ],
+    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "sourceMap": false,
