@@ -2,32 +2,32 @@ function sum(nums: number[]): number {
   return nums.reduce((acc, cur): number => acc + cur, 0)
 }
 
-export enum ScrollBehavior {
+export enum KecapBehavior {
   TYPE_A,
-  TYPE_B
+  TYPE_B,
 }
 
-export class Item {
+export class KecapItem {
   public element: HTMLElement
 
   public constructor(element: HTMLElement) {
     this.element = element
   }
 
-  public unselect(): void {
-    this.element.classList.remove('select')
-  }
-
   public select(): void {
     this.element.classList.add('select')
   }
 
-  public load(): void{
+  public unselect(): void {
+    this.element.classList.remove('select')
+  }
+
+  public load(): void {
     this.element.classList.add('ready')
   }
 }
 
-export interface ItemManagerOptions {
+export interface KecapOptions {
   /** 미리 로딩할 엘리먼트 칸 수 */
   preloadLimit: number
   /** 전체 아이템 그리드 행 크기 */
@@ -39,15 +39,15 @@ export interface ItemManagerOptions {
   /** 보여지는 아이템 그리드 열 크기 */
   viewportCol: number
   /** 스크롤 작동 방법 */
-  strategy: ScrollBehavior
+  strategy: KecapBehavior
 }
 
-export class ItemManager {
+export class Kecap {
   /** 카로셀 그리드 엘리먼트 */
   private element: HTMLElement
 
   /** 아이템 엘리먼트 배열 */
-  private items: Item[]
+  private items: KecapItem[]
 
   /** 미리 로딩할 엘리먼트 칸 수 */
   public preloadLimit = 1
@@ -77,13 +77,111 @@ export class ItemManager {
   public viewportCol = 3
 
   /** 스크롤 작동 방법 */
-  public strategy = ScrollBehavior.TYPE_A
+  public strategy = KecapBehavior.TYPE_A
 
-  public constructor(element: HTMLElement, options?: Partial<ItemManagerOptions>) {
+  public constructor(element: HTMLElement, options?: Partial<KecapOptions>) {
     this.element = element
     this.items = []
     Object.assign(this, options)
+  }
 
+  /**
+   * 현재 선택된 아이템
+   */
+  public get selectedItem(): KecapItem {
+    return this.items[this.row * this.itemCol + this.col]
+  }
+
+  /**
+   * 현재 선택된 아이템
+   */
+  public set selectedItem(item: KecapItem) {
+    throw new Error("not implemented")
+  }
+
+  /**
+   * 그리드에 엘리먼트를 추가합니다.
+   * @param element
+   */
+  public addElement(element: HTMLElement): void {
+    this.addItem(new KecapItem(element))
+  }
+
+  /**
+   * 그리드에 엘리먼트를 추가합니다.
+   * @param elements
+   */
+  public addElements(elements: HTMLElement[]): void {
+    this.addItems(elements.map((element): KecapItem => new KecapItem(element)))
+  }
+
+  /**
+   * 그리드에 아이템을 추가합니다.
+   * @param item
+   */
+  public addItem(item: KecapItem): void {
+    this.items.push(item)
+  }
+
+  /**
+   * 그리드에 아이템을 추가합니다.
+   * @param items
+   */
+  public addItems(items: KecapItem[]): void {
+    this.items = this.items.concat(items)
+  }
+
+  /**
+   * 보여지는 화면을 위로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollAbove(): boolean {
+    return this.viewRow > 0 && (
+      this.strategy === KecapBehavior.TYPE_A
+      || (this.strategy === KecapBehavior.TYPE_B && this.row === this.viewRow - 1)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 아래로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollBelow(): boolean {
+    return this.viewRow + this.viewportRow < this.itemRow && (
+      this.strategy === KecapBehavior.TYPE_A
+      || (this.strategy === KecapBehavior.TYPE_B && this.row === this.viewRow + this.viewportRow)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 왼쪽으로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollLeft(): boolean {
+    return this.viewCol > 0 && (
+      this.strategy === KecapBehavior.TYPE_A
+      || (this.strategy === KecapBehavior.TYPE_B && this.col === this.viewCol - 1)
+    )
+  }
+
+  /**
+   * 보여지는 화면을 오른쪽으로 움직일 수 있는지 확인합니다.
+   */
+  private checkScrollRight(): boolean {
+    return this.viewCol + this.viewportCol < this.itemCol && (
+      this.strategy === KecapBehavior.TYPE_A
+      || (this.strategy === KecapBehavior.TYPE_B && this.col === this.viewCol + this.viewportCol)
+    )
+  }
+
+  /**
+   * Kecap을 삭제합니다.
+   */
+  public destroy(): void {
+
+  }
+
+  /**
+   * Kecap을 초기화합니다.
+   */
+  public init(): void {
     // 엘리먼트를 아이템으로 변환해 배열에 저장합니다.
     this.addElements(Array.from(this.element.children[0].children) as HTMLElement[])
 
@@ -98,86 +196,28 @@ export class ItemManager {
         item.load()
       }
     }
-  }
+    this.selectedItem.select()
 
-  /**
-   * 현재 선택된 아이템
-   */
-  public get selectedItem(): Item {
-    return this.items[this.row * this.itemCol + this.col]
-  }
+    // CSS 속성을 부여합니다.
+    this.element.firstChild.style.setProperty('grid-template-columns', `repeat(${this.itemCol}, auto)`)
 
-  /**
-   * 현재 선택된 아이템
-   */
-  public set selectedItem(item: Item) {
-    throw new Error("not implemented")
-  }
-
-  /**
-   * 그리드에 엘리먼트를 추가합니다.
-   * @param element
-   */
-  public addElement(element: HTMLElement): void {
-    this.addItem(new Item(element))
-  }
-
-  /**
-   * 그리드에 엘리먼트를 추가합니다.
-   * @param elements
-   */
-  public addElements(elements: HTMLElement[]): void {
-    this.addItems(elements.map((element): Item => new Item(element)))
-  }
-
-  /**
-   * 그리드에 아이템을 추가합니다.
-   * @param item
-   */
-  public addItem(item: Item): void {
-    this.items.push(item)
-  }
-
-  /**
-   * 그리드에 아이템을 추가합니다.
-   * @param items
-   */
-  public addItems(items: Item[]): void {
-    this.items = this.items.concat(items)
-  }
-
-  /**
-   * 보여지는 화면을 위로 움직일 수 있는지 확인합니다.
-   */
-  private checkScrollAbove(): boolean {
-    return this.viewRow > 0 && (
-      this.strategy === ScrollBehavior.TYPE_A
-      || (this.strategy === ScrollBehavior.TYPE_B && this.row === this.viewRow - 1)
-    )
-  }
-
-  /**
-   * 보여지는 화면을 아래로 움직일 수 있는지 확인합니다.
-   */
-  private checkScrollBelow(): boolean {
-    return this.viewRow + this.viewportRow < this.itemRow && (
-      this.strategy === ScrollBehavior.TYPE_A
-      || (this.strategy === ScrollBehavior.TYPE_B && this.row === this.viewRow + this.viewportRow)
-    )
-  }
-
-  /**
-   * 보여지는 화면을 왼쪽으로 움직일 수 있는지 확인합니다.
-   */
-  private checkScrollLeft(): boolean {
-    return this.viewCol > 0 && this.col === this.viewCol - 1
-  }
-
-  /**
-   * 보여지는 화면을 오른쪽으로 움직일 수 있는지 확인합니다.
-   */
-  private checkScrollRight(): boolean {
-    return this.viewCol + this.viewportCol < this.itemCol && (this.col === this.viewCol + this.viewportCol)
+    // 키보드 이벤트를 등록합니다.
+    window.addEventListener('keydown', ({ key }) => {
+      switch (key) {
+        case 'ArrowUp':
+          this.selectAbove()
+          break;
+        case 'ArrowDown':
+          this.selectBelow()
+          break;
+        case 'ArrowLeft':
+          this.selectLeft()
+          break;
+        case 'ArrowRight':
+          this.selectRight()
+          break;
+      }
+    })
   }
 
   /**
@@ -249,9 +289,7 @@ export class ItemManager {
    */
   private scrollAbove(): void {
     this.viewRow -= 1
-
-    //TODO fix
-    const top = this.items[this.viewRow * this.itemCol + this.viewCol].element.offsetTop
+    const top = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetTop - this.element.offsetTop
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -263,9 +301,7 @@ export class ItemManager {
    */
   private scrollBelow(): void {
     this.viewRow += 1
-
-    //TODO fix
-    const top = this.items[this.viewRow * this.itemCol + this.viewCol - this.viewportCol + 1].element.offsetTop
+    const top = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetTop - this.element.offsetTop
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -277,7 +313,6 @@ export class ItemManager {
    */
   private scrollLeft(): void {
     this.viewCol -= 1
-
     const left = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetLeft - this.element.offsetLeft
     this.element.scrollTo({
       left,
@@ -290,7 +325,6 @@ export class ItemManager {
    */
   private scrollRight(): void {
     this.viewCol += 1
-
     const left = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetLeft - this.element.offsetLeft
     this.element.scrollTo({
       left,
@@ -347,7 +381,6 @@ export class ItemManager {
    * 현재 위치에서 오른쪽 아이템을 선택합니다.
    */
   public selectRight(): void {
-    console.log(this.itemCol)
     if (this.col < this.itemCol - 1) {
       this.selectedItem.unselect()
       this.col += 1

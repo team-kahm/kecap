@@ -1,7 +1,12 @@
 <section class="Section">
   <h1 class="Section__title">Try It</h1>
+  <h2>Type A</h2>
   <div class="Kecap Kecap--A" bind:this={kecapAElem}>
     <div class="Kecap__grid" bind:this={kecapAChildElem}></div>
+  </div>
+  <h2>Type B</h2>
+  <div class="Kecap Kecap--B" bind:this={kecapBElem}>
+    <div class="Kecap__grid" bind:this={kecapBChildElem}></div>
   </div>
 </section>
 
@@ -16,9 +21,14 @@
     overflow: hidden;
   }
 
+  .Kecap--B {
+    width: 550px;
+    height: 550px;
+    overflow: hidden;
+  }
+
   .Kecap__grid {
     display: grid;
-    grid-template-columns: repeat(100, 100px);
     grid-gap: 10px;
   }
 
@@ -38,10 +48,12 @@
 
 <script lang="typescript">
   import { onMount } from 'svelte'
-  import { ItemManager, ScrollBehavior } from '../../src/kecap'
+  import { Kecap, KecapBehavior } from '../../src/kecap'
 
   let kecapAElem: HTMLElement, kecapAChildElem: HTMLElement
+  let kecapBElem: HTMLElement, kecapBChildElem: HTMLElement
   const kecapAItemCount = 100
+  const kecapBItemCount = 100
 
   onMount(() => {
     kecapAChildElem.innerHTML = '';
@@ -51,24 +63,29 @@
 
       kecapAChildElem.appendChild(item)
     }
+     for(let i = 0; i < kecapAItemCount; i++) {
+      const item = document.createElement('div')
+      item.innerText = `${i}`
 
-    const manager = new ItemManager(kecapAElem, {
-      strategy: ScrollBehavior.TYPE_A,
+      kecapBChildElem.appendChild(item)
+    }
+
+    const kecapA = new Kecap(kecapAElem, {
+      strategy: KecapBehavior.TYPE_A,
       viewportCol: 5,
       viewportRow: 1,
       itemCol: kecapAItemCount,
       itemRow: 1
     })
+    kecapA.init()
 
-    window.addEventListener('keydown', key => {
-      switch(key.code) {
-        case 'ArrowLeft':
-          manager.selectLeft()
-          break
-        case 'ArrowRight':
-          manager.selectRight()
-          break
-      }
+    const kecapB = new Kecap(kecapBElem, {
+      strategy: KecapBehavior.TYPE_B,
+      viewportCol: 5,
+      viewportRow: 5,
+      itemCol: 10,
+      itemRow: 10
     })
+    kecapB.init()
   })
 </script>

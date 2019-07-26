@@ -1,0 +1,24 @@
+
+.kecap {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.kecap-grid {
+    display: grid;
+    grid-gap: 10px;
+}
+
+.kecap-item {
+    width: 100px;
+    height: 100px;
+    background-color: #039be5;
+}
+
+.kecap-item.select {
+    background-color: red;
+}
+
+.kecap-item.ready {
+    color: orange;
+}
