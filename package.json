@@ -26,7 +26,6 @@
     "rollup-plugin-sucrase": "^2.1.0",
     "rollup-plugin-svelte": "^5.1.0",
     "rollup-plugin-terser": "^5.1.0",
-    "svelte": "^3.6.4",
     "typescript": "^3.5.2"
   },
   "scripts": {
@@ -50,5 +49,7 @@
     "url": "https://github.com/project-kahm/kecap/issues"
   },
   "homepage": "https://github.com/project-kahm/kecap#readme",
-  "dependencies": {}
+  "dependencies": {
+    "svelte": "^3.6.4"
+  }
 }

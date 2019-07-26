@@ -170,20 +170,14 @@ export class ItemManager {
    * 보여지는 화면을 왼쪽으로 움직일 수 있는지 확인합니다.
    */
   private checkScrollLeft(): boolean {
-    return this.viewCol > 0 && (
-      this.strategy === ScrollBehavior.TYPE_A
-      || (this.strategy === ScrollBehavior.TYPE_B && this.col === this.viewCol - 1)
-    )
+    return this.viewCol > 0 && this.col === this.viewCol - 1
   }
 
   /**
    * 보여지는 화면을 오른쪽으로 움직일 수 있는지 확인합니다.
    */
   private checkScrollRight(): boolean {
-    return this.viewCol + this.viewportCol < this.itemCol && (
-      this.strategy === ScrollBehavior.TYPE_A
-      || (this.strategy === ScrollBehavior.TYPE_B && this.col === this.viewCol + this.viewportCol)
-    )
+    return this.viewCol + this.viewportCol < this.itemCol && (this.col === this.viewCol + this.viewportCol)
   }
 
   /**
@@ -255,8 +249,9 @@ export class ItemManager {
    */
   private scrollAbove(): void {
     this.viewRow -= 1
-    const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-    const top = sum(topElements.map(item => item.element.offsetHeight))
+
+    //TODO fix
+    const top = this.items[this.viewRow * this.itemCol + this.viewCol].element.offsetTop
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -268,8 +263,9 @@ export class ItemManager {
    */
   private scrollBelow(): void {
     this.viewRow += 1
-    const topElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) < this.viewRow && index % this.itemCol === this.viewCol)
-    const top = sum(topElements.map(item => item.element.offsetWidth))
+
+    //TODO fix
+    const top = this.items[this.viewRow * this.itemCol + this.viewCol - this.viewportCol + 1].element.offsetTop
     this.element.scrollTo({
       top,
       behavior: 'smooth',
@@ -281,8 +277,8 @@ export class ItemManager {
    */
   private scrollLeft(): void {
     this.viewCol -= 1
-    const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-    const left = sum(leftElements.map(item => item.element.offsetHeight))
+
+    const left = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetLeft - this.element.offsetLeft
     this.element.scrollTo({
       left,
       behavior: 'smooth',
@@ -294,8 +290,8 @@ export class ItemManager {
    */
   private scrollRight(): void {
     this.viewCol += 1
-    const leftElements = this.items.filter((_, index) => Math.floor(index / this.itemCol) === this.viewRow && index % this.itemCol < this.viewCol)
-    const left = sum(leftElements.map(item => item.element.offsetHeight))
+
+    const left = this.items[this.viewCol + this.itemCol * this.viewRow].element.offsetLeft - this.element.offsetLeft
     this.element.scrollTo({
       left,
       behavior: 'smooth',
@@ -351,6 +347,7 @@ export class ItemManager {
    * 현재 위치에서 오른쪽 아이템을 선택합니다.
    */
   public selectRight(): void {
+    console.log(this.itemCol)
     if (this.col < this.itemCol - 1) {
       this.selectedItem.unselect()
       this.col += 1
