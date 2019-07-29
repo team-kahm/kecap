@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf8'>
+    <meta name='viewport' content='width=device-width'>
+    <title>Kecap Demo</title>
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/tryout.css">
+</head>
+
+<body>
+    <nav class="Navbar">
+        <div class="Navbar__list">
+            <img class="Navbar__branding" alt="Kecap Logo" src="images/KecapLogoSmall.png">
+            <a href="#main">Kecap</a>
+            <a href="#tryout">Try It</a>
+            <a href="#install">Installation</a>
+            <a href="#usage">Usage</a>
+        </div>
+    </nav>
+    <main>
+        <section class="Main">
+            <img class="Main__logo" alt="Kecap Logo" src="images/KecapLogo.svg">
+            <div class="Main__content">
+                <h1>Kecap</h1>
+                <p>Keyboard-driven Carousel Component Provider</p>
+
+                <div class="Main__buttons">
+                    <button class="Button Button--primary">Download</button>
+                    <button class="Button">Github</button>
+                </div>
+            </div>
+        </section>
+        <section class="Section">
+            <h1 class="Section__title">Try It</h1>
+            <h2>Type A</h2>
+            <kecap-a margin="10" itemrow="1" itemcol="10" viewportrow="1" viewportcol="5">
+                <div slot="item" class="item">1</div>
+                <div slot="item" class="item">2</div>
+                <div slot="item" class="item">3</div>
+                <div slot="item" class="item">4</div>
+                <div slot="item" class="item">5</div>
+                <div slot="item" class="item">6</div>
+                <div slot="item" class="item">7</div>
+                <div slot="item" class="item">8</div>
+                <div slot="item" class="item">9</div>
+            </kecap-a>
+            <h2>Type B</h2>
+            <kecap-b margin="10">
+                <div slot="item" class="item">1</div>
+                <div slot="item" class="item">2</div>
+                <div slot="item" class="item">3</div>
+                <div slot="item" class="item">4</div>
+                <div slot="item" class="item">5</div>
+                <div slot="item" class="item">6</div>
+                <div slot="item" class="item">7</div>
+                <div slot="item" class="item">8</div>
+                <div slot="item" class="item">9</div>
+                <div slot="item" class="item">10</div>
+                <div slot="item" class="item">11</div>
+                <div slot="item" class="item">12</div>
+                <div slot="item" class="item">13</div>
+                <div slot="item" class="item">14</div>
+                <div slot="item" class="item">15</div>
+                <div slot="item" class="item">16</div>
+                <div slot="item" class="item">17</div>
+                <div slot="item" class="item">18</div>
+                <div slot="item" class="item">19</div>
+                <div slot="item" class="item">20</div>
+                <div slot="item" class="item">21</div>
+                <div slot="item" class="item">22</div>
+                <div slot="item" class="item">23</div>
+                <div slot="item" class="item">24</div>
+                <div slot="item" class="item">25</div>
+            </kecap-b>
+        </section>
+    </main>
+    <script src="../src/kecap.ts"></script>
+</body>
+
+</html>
