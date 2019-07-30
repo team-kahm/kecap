@@ -88,13 +88,12 @@ input[type="range"] {
     border-color: #81d4fa;
 }
 
-.Section {
-    padding: 30px;
-}
-
-.Section__title {
-    color: #f1f2f3;
-    font-family: 'Titillium Web', sans-serif;
-    font-size: 2rem;
-    margin: 0;
+code {
+    display: inline-block;
+    margin: 0 auto;
+    color: #202020;
+    font-family: 'TypoPRO Iosevka Term', 'Iosevka', monospace;
+    background: #e1e2e3;
+    padding: 1px 3px;
+    border-radius: 5px;
 }

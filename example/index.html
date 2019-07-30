@@ -9,7 +9,13 @@
     <link rel="stylesheet" href="styles/global.css">
     <link rel="stylesheet" href="styles/navbar.css">
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/tryout.css">
+    <link rel="stylesheet" href="styles/sections.css">
+    <link rel="stylesheet" href="styles/syntax.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500|Titillium+Web:200,400&display=swap">
+
 </head>
 
 <body>
@@ -18,12 +24,12 @@
             <img class="Navbar__branding" alt="Kecap Logo" src="images/KecapLogoSmall.png">
             <a href="#main">Kecap</a>
             <a href="#tryout">Try It</a>
-            <a href="#install">Installation</a>
+            <a href="#installation">Installation</a>
             <a href="#usage">Usage</a>
         </div>
     </nav>
     <main>
-        <section class="Main">
+        <section class="Main" id="main">
             <img class="Main__logo" alt="Kecap Logo" src="images/KecapLogo.svg">
             <div class="Main__content">
                 <h1>Kecap</h1>
@@ -35,10 +41,11 @@
                 </div>
             </div>
         </section>
-        <section class="Section">
+        <section class="Section" id="tryout">
             <h1 class="Section__title">Try It</h1>
+            Focus and press arrow key to move
             <h2>Type A</h2>
-            <kecap-a margin="10" itemrow="1" itemcol="10" viewportrow="1" viewportcol="5">
+            <kecap-a class="Kecap" margin="10" itemrow="1" itemcol="10" viewportrow="1" viewportcol="5" tabindex="0">
                 <div slot="item" class="item">1</div>
                 <div slot="item" class="item">2</div>
                 <div slot="item" class="item">3</div>
@@ -51,7 +58,7 @@
                 <div slot="item" class="item">10</div>
             </kecap-a>
             <h2>Type B</h2>
-            <kecap-b margin="10">
+            <kecap-b class="Kecap" margin="10" tabindex="1">
                 <div slot="item" class="item">1</div>
                 <div slot="item" class="item">2</div>
                 <div slot="item" class="item">3</div>
@@ -79,8 +86,62 @@
                 <div slot="item" class="item">25</div>
             </kecap-b>
         </section>
+
+        <section class="Section" id="installation">
+          <h1 class="Section__title">Installation</h1>
+          <div class="Section__content">
+            <code>$ npm i kecap --save</code>
+          </div>
+        </section>
+
+        <section class="Section" id="usage">
+          <h1 class="Section__title">Usage</h1>
+          <h2>API</h2>
+          <code>&lt;kecap-a&gt;</code>
+          is implemented for Type A, and
+          <code>&lt;kecap-b&gt;</code>
+          is implemented for Type B.
+
+          <h3>Attributes</h3>
+          <ul>
+            <li><code>margin</code> - the size of the gap between an element's rows and columns</li>
+            <li><code>preload</code> - number of elements to be preloaded(must be at least 1)</li>
+            <li><code>itemrow</code> - the grid row size</li>
+            <li><code>itemcol</code> - the grid column size</li>
+            <li><code>viewportrow</code> - the viewport row size</li>
+            <li><code>viewportcol</code> - the viewport column size</li>
+          </ul>
+
+          <h2>Examples</h2>
+          <pre><code class="language-markup">
+            &lt;kecap-a itemrow="1" itemcol="10" viewportrow="1" viewportcol="5"&gt;
+                &lt;div&gt;1&lt;/div&gt;
+                &lt;div&gt;2&lt;/div&gt;
+                &lt;div&gt;3&lt;/div&gt;
+                ...
+                &lt;div&gt;8&lt;/div&gt;
+                &lt;div&gt;9&lt;/div&gt;
+                &lt;div&gt;10&lt;/div&gt;
+            &lt;/kecap-a&gt;
+          </code></pre>
+
+          <pre><code class="language-markup">
+            &lt;kecap-b itemrow="5" itemcol="5" viewportrow="3" viewportcol="3"&gt;
+                &lt;div&gt;1&lt;/div&gt;
+                &lt;div&gt;2&lt;/div&gt;
+                &lt;div&gt;3&lt;/div&gt;
+                ...
+                &lt;div&gt;23&lt;/div&gt;
+                &lt;div&gt;24&lt;/div&gt;
+                &lt;div&gt;25&lt;/div&gt;
+            &lt;/kecap-b&gt;
+          </code></pre>
+        </section>
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/components/prism-markup.min.js"></script>
     <script src="../src/kecap.ts"></script>
+    <script src="./index.ts"></script>
 </body>
 
 </html>

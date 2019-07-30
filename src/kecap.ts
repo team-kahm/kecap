@@ -99,6 +99,10 @@ abstract class Kecap extends HTMLElement {
   }
 
   private _onKeyDown(event: KeyboardEvent): void {
+    if(document.activeElement !== this) return;
+
+    let handled = true;
+
     switch (event.key) {
       case 'ArrowUp':
         this.selectAbove()
@@ -113,7 +117,10 @@ abstract class Kecap extends HTMLElement {
         this.selectRight()
         break
       default:
+        handled = false;
     }
+
+    if(handled) event.preventDefault();
   }
 
   /**
