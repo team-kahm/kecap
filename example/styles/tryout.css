@@ -9,6 +9,7 @@
     line-height: 100px;
     text-align: center;
     background-color: #039be5;
+    will-change: transform;
 }
 
 .item.select {
