@@ -1,10 +1,20 @@
 # Kecap
 
-![Logo](./public/social_preview.png)
+![Logo](./social_preview.png)
 
 > Keyboard-driven Carousel Component Provider
 
 [![npm](https://img.shields.io/npm/v/kecap.svg?style=flat-square)](https://www.npmjs.com/package/kecap) [![npm](https://img.shields.io/npm/dt/kecap.svg?style=flat-square)](https://www.npmjs.com/package/kecap)
+
+Developed with Typescript and [Custom Elements API](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+
+## Browser compatibility
+
+| IE  | Edge | FireFox | Chrome | Safari | Opera |
+| --- | ---- | ------- | ------ | ------ | ----- |
+| X   | 76~  | 63~     | 54~    | 10.1~  | 41~   |
+
+See [more](https://caniuse.com/#feat=custom-elementsv1)
 
 ## ChangeLog
 
@@ -18,7 +28,9 @@ See [Demo](http://project-kahm.github.io/kecap/)
 
 ## Features
 
-- Lazy load elements
+- HTML5 Expandable Custom Elements
+- Keyboard-driven movable list
+- Element prepared listener for lazy loading
 
 ## Installation
 
@@ -40,13 +52,13 @@ git clone https://github.com/project-kahm/kecap.git
 # install dependencies
 $ npm install
 
-# serve with hot reload at localhost:10001
+# serve with hot reload at localhost:1234
 $ npm run dev
 
 # build for production
 $ npm run build
 
-# generate static project
+# generate example
 $ npm run generate
 ```
 
