@@ -43,8 +43,7 @@ abstract class Kecap extends HTMLElement {
     const grid = document.createElement('div')
     grid.classList.add('kecap-grid')
     const slot = document.createElement('slot')
-    grid.classList.add('kecap-item')
-    slot.name = 'item'
+    slot.classList.add('kecap-item')
     grid.appendChild(slot)
     viewport.appendChild(grid)
     shadowRoot.appendChild(viewport)
