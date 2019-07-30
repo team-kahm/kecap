@@ -10,6 +10,8 @@ Developed with Typescript and [Custom Elements API](https://developer.mozilla.or
 
 ## Browser compatibility
 
+Tested in Chrome 75
+
 | IE  | Edge | FireFox | Chrome | Safari | Opera |
 | --- | ---- | ------- | ------ | ------ | ----- |
 | X   | 76~  | 63~     | 54~    | 10.1~  | 41~   |
@@ -44,6 +46,51 @@ npm install kecap --save
 
 ```bash
 git clone https://github.com/project-kahm/kecap.git
+```
+
+## Usage
+
+### API
+
+`<kecap-a>` is implemented for [Type A](https://github.com/project-kahm/kecap/issues/1), and `<kecap-b>` is implemented for [Type B](https://github.com/project-kahm/kecap/issues/2).
+
+#### Attributes
+
+- `margin` - the size of the gap between an element's rows and columns
+- `preload` - number of elements to be preloaded(must be at least 1)
+- `itemrow` - the grid row size
+- `itemcol` - the grid column size
+- `viewportrow` - the viewport row size
+- `viewportcol` - the viewport column size
+
+### Example
+
+#### Type A
+
+```html
+<kecap-a itemrow="1" itemcol="10" viewportrow="1" viewportcol="5">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    ...
+    <div>8</div>
+    <div>9</div>
+    <div>10</div>
+</kecap-a>
+```
+
+#### Type B
+
+```html
+<kecap-b itemrow="5" itemcol="5" viewportrow="3" viewportcol="3">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    ...
+    <div>23</div>
+    <div>24</div>
+    <div>25</div>
+</kecap-b>
 ```
 
 ## Build Setup
