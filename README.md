@@ -8,7 +8,7 @@
 
 Developed with Typescript and [Custom Elements API](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
 
-## Browser compatibility
+## Browser Compatibility
 
 Tested in Chrome 75
 
@@ -65,17 +65,27 @@ git clone https://github.com/project-kahm/kecap.git
 
 ### Example
 
+Set item size and `will-change` attribute.
+
+```css
+.item {
+    width: 100px;
+    height: 100px;
+    will-change: transform;
+}
+```
+
 #### Type A
 
 ```html
 <kecap-a itemrow="1" itemcol="10" viewportrow="1" viewportcol="5">
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
     ...
-    <div>8</div>
-    <div>9</div>
-    <div>10</div>
+    <div class="item">8</div>
+    <div class="item">9</div>
+    <div class="item">10</div>
 </kecap-a>
 ```
 
@@ -83,13 +93,13 @@ git clone https://github.com/project-kahm/kecap.git
 
 ```html
 <kecap-b itemrow="5" itemcol="5" viewportrow="3" viewportcol="3">
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
     ...
-    <div>23</div>
-    <div>24</div>
-    <div>25</div>
+    <div class="item">23</div>
+    <div class="item">24</div>
+    <div class="item">25</div>
 </kecap-b>
 ```
 
