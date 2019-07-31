@@ -1,1 +1,1 @@
-document.querySelector('kecap-a').focus();
+document.querySelector('kecap-a').focus()

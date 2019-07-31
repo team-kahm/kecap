@@ -16,10 +16,6 @@
     "ecmaVersion": 2019,
     "sourceType": "module"
   },
-  "plugins": [
-    "html",
-    "svelte3"
-  ],
   "settings": {
     "import/resolver": {
       "node": {
@@ -30,12 +26,6 @@
       }
     }
   },
-  "overrides": [
-    {
-      "files": "*.svelte",
-      "processor": "svelte3/svelte3"
-    }
-  ],
   "rules": {
     "@typescript-eslint/indent": [
       "error",

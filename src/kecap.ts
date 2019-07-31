@@ -98,9 +98,9 @@ abstract class Kecap extends HTMLElement {
   }
 
   private _onKeyDown(event: KeyboardEvent): void {
-    if(document.activeElement !== this) return;
+    if (document.activeElement !== this) return
 
-    let handled = true;
+    let handled = true
 
     switch (event.key) {
       case 'ArrowUp':
@@ -116,10 +116,10 @@ abstract class Kecap extends HTMLElement {
         this.selectRight()
         break
       default:
-        handled = false;
+        handled = false
     }
 
-    if(handled) event.preventDefault();
+    if (handled) event.preventDefault()
   }
 
   /**
