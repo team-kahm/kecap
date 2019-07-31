@@ -2,6 +2,7 @@
   "name": "kecap",
   "version": "1.0.0",
   "description": "Keyboard-driven Carousel Component Provider",
+  "main": "dist/kecap.js",
   "keywords": [
     "html5",
     "custom-component",
